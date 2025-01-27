@@ -7,7 +7,3 @@
 /************************* MQTT server config *********************************/
 
 #define MQTT_SERVER ""
-
-/************************* Board specific setup *******************************/
-
-#define MQTT_TOPIC_SET_VALUE_1 ""
