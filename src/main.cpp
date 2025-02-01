@@ -1,6 +1,4 @@
 #include "Arduino.h"
-#include <WiFi.h>
-#include <MQTT.h>
 
 #include "secrets.h"
 #include "connection.cpp"
@@ -27,27 +25,20 @@ void setup()
   Serial.begin(9600);
 
   // Set up purpose of GPIOs.
-  pinMode(LED_BUILTIN, OUTPUT);
   pinMode(WATER_METER_COLD_PIN, INPUT_PULLDOWN);
   pinMode(WATER_METER_HOT_PIN, INPUT_PULLDOWN);
 
-  const char ssid[] = WLAN_SSID;
-  const char pass[] = WLAN_PASS;
-
-  Serial.println("WIFI connecting...");
+  char ssid[] = WLAN_SSID;
+  char pass[] = WLAN_PASS;
 
   // Set up Wi-Fi
   WiFi.begin(ssid, pass);
-
-  Serial.println("MQTT connecting…");
 
   // Set up MQTT
   mqtt.begin(MQTT_SERVER, wifi);
 
   // Connect to Wi-Fi and MQTT
-  connectToMQTT();
-
-  Serial.println("Ready!");
+  connectToMQTT(&deviceInfo.uniqueId[0]);
 
   // Сразу после того как соединение по WiFi установлено и MQTT канал доступен,
   // инициализируем девайс и сенсоры к нему. В момент инициализации происходит
@@ -62,13 +53,12 @@ void setup()
 
 void loop()
 {
-  // Serial.println(".");
-  // mqtt.loop();
+  mqtt.loop();
 
-  // // Periodically check the status of the Wi-Fi and MQTT connections
-  // // and recreate them if they are not established.
-  // if (!mqtt.connected())
-  //   connectToMQTT();
+  // Periodically check the status of the Wi-Fi and MQTT connections
+  // and recreate them if they are not established.
+  if (!mqtt.connected())
+    connectToMQTT(&deviceInfo.uniqueId[0]);
 
   // Whether the wires of cold or hot water meters are connected.
   boolean waterMeterColdState = digitalRead(WATER_METER_COLD_PIN);

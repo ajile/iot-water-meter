@@ -107,7 +107,7 @@ public:
     Serial.println(&this->getTopicNameAvailability()[0]);
     Serial.println(&json.dump()[0]);
 
-    // this->mqtt.publish(&this->getTopicNameAvailability()[0], &json.dump()[0]);
+    this->mqtt.publish(&this->getTopicNameAvailability()[0], &json.dump()[0]);
   }
 
   std::string getTopicNameAvailability()
